@@ -7,7 +7,6 @@ export interface User extends Document {
   email: string;
   phone_number: string;
   address: string;
-  role: "Cliente" | "Domiciliario" | "Administrador";
   active: boolean;
   comparePassword(password: string): Promise<boolean>;
 }
@@ -42,11 +41,6 @@ const userSchema: mongoose.Schema = new mongoose.Schema(
       type: String,
       required: true,
       maxlength: 48,
-    },
-    role: {
-      type: String,
-      required: true,
-      enum: ["Cliente", "Domiciliario", "Administrador"],
     },
     active: {
       type: Boolean,
