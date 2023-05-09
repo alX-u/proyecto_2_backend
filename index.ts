@@ -24,3 +24,5 @@ connect();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+//Ruta de usuarios
