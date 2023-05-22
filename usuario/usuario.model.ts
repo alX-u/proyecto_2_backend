@@ -1,17 +1,28 @@
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import { Schema, model } from "mongoose";
+const bcrypt = require("bcrypt");
 
-export interface User extends Document {
+interface IUser {
   name: string;
   password: string;
   email: string;
   phone_number: string;
   address: string;
   active: boolean;
-  comparePassword(password: string): Promise<boolean>;
+  //comparePassword(password: string): Promise<boolean>;
 }
 
-const userSchema: mongoose.Schema = new mongoose.Schema(
+/*
+
+███╗░░░███╗███████╗░██████╗░█████╗░
+████╗░████║██╔════╝██╔════╝██╔══██╗
+██╔████╔██║█████╗░░╚█████╗░███████║
+██║╚██╔╝██║██╔══╝░░░╚═══██╗██╔══██║
+██║░╚═╝░██║███████╗██████╔╝██║░░██║
+╚═╝░░░░░╚═╝╚══════╝╚═════╝░╚═╝░░╚═╝
+
+*/
+
+const userSchema = new Schema<IUser>(
   {
     name: {
       type: String,
@@ -50,33 +61,33 @@ const userSchema: mongoose.Schema = new mongoose.Schema(
   { timestamps: true, collection: "users" }
 );
 
-userSchema.pre("save", function (next) {
-  if (this.isModified("password")) {
-    bcrypt.hash(this.password, 8, (err, hash) => {
-      if (err) return next(err);
+// userSchema.pre("save", function (next) {
+//   if (this.isModified("password")) {
+//     bcrypt.hash(this.password, 8, (err, hash) => {
+//       if (err) return next(err);
 
-      this.password = hash;
-      next();
-    });
-  } else {
-    next();
-  }
-});
+//       this.password = hash;
+//       next();
+//     });
+//   } else {
+//     next();
+//   }
+// });
 
-userSchema.methods.comparePassword = async function (
-  password: string
-): Promise<boolean> {
-  if (!password) {
-    throw new Error("¡Falta la contraseña!");
-  } else {
-    try {
-      const result = await bcrypt.compare(password, this.password);
-      return result;
-    } catch (error) {
-      console.log("Error: ", error);
-      return false;
-    }
-  }
-};
+// userSchema.methods.comparePassword = async function (
+//   password: string
+// ): Promise<boolean> {
+//   if (!password) {
+//     throw new Error("¡Falta la contraseña!");
+//   } else {
+//     try {
+//       const result = await bcrypt.compare(password, this.password);
+//       return result;
+//     } catch (error) {
+//       console.log("Error: ", error);
+//       return false;
+//     }
+//   }
+// };
 
-export default mongoose.model<User>("user", userSchema);
+export default model<IUser>("user", userSchema);
