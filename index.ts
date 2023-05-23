@@ -1,6 +1,7 @@
-const express = require("express");
+import express from "express";
 const mongoose = require("mongoose");
 const cors = require("cors");
+import userRoutes from "./usuario/usuario.routes";
 
 // Creación de la app
 const app = express();
@@ -25,4 +26,10 @@ connect();
 app.use(cors());
 app.use(express.json());
 
-//Ruta de usuarios
+//Rutas de usuarios
+app.use("/users", userRoutes);
+
+// Endpoint para 404
+app.use((req: express.Request, res: express.Response) => {
+  res.status(404).json({ message: "Not found." });
+});
