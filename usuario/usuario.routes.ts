@@ -9,7 +9,7 @@ router.post("/", createUser);
 //Ruta para obtener un usuario según el ID
 router.get("/ById/:_id", getUserById);
 
-//Ruta para inhabilitar al usuario según el ID
+//Ruta para inhabilitar al usuario según el ID (necesita token)
 router.delete("/:_id", deleteUser);
 
 export default router;
