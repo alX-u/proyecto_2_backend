@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { CallbackError, Schema, model } from "mongoose";
 const bcrypt = require("bcrypt");
 
 interface IUser {
@@ -8,7 +8,7 @@ interface IUser {
   phone_number: string;
   address: string;
   active: boolean;
-  //comparePassword(password: string): Promise<boolean>;
+  comparePassword(password: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>(
@@ -50,33 +50,32 @@ const userSchema = new Schema<IUser>(
   { timestamps: true, collection: "users" }
 );
 
-// userSchema.pre("save", function (next) {
-//   if (this.isModified("password")) {
-//     bcrypt.hash(this.password, 8, (err, hash) => {
-//       if (err) return next(err);
 
-//       this.password = hash;
-//       next();
-//     });
-//   } else {
-//     next();
-//   }
-// });
+userSchema.pre("save", function (next) {
+  if (this.isModified("password")) {
+    bcrypt.hash(this.password, 8, (err: CallbackError | undefined, hash: string) => {
+      if (err) return next(err);
 
-// userSchema.methods.comparePassword = async function (
-//   password: string
-// ): Promise<boolean> {
-//   if (!password) {
-//     throw new Error("¡Falta la contraseña!");
-//   } else {
-//     try {
-//       const result = await bcrypt.compare(password, this.password);
-//       return result;
-//     } catch (error) {
-//       console.log("Error: ", error);
-//       return false;
-//     }
-//   }
-// };
+      this.password = hash;
+      next();
+    });
+  } else {
+    next();
+  }
+});
+
+userSchema.methods.comparePassword = async function ( password: string ): Promise<boolean> {
+  if (!password) {
+    throw new Error("¡Falta la contraseña!");
+  } else {
+    try {
+      const result = await bcrypt.compare(password, this.password);
+      return result;
+    } catch (error) {
+      console.log("Error: ", error);
+      return false;
+    }
+  }
+};
 
 export default model<IUser>("user", userSchema);

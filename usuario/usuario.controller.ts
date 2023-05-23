@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import User from "./usuario.model"; // Importa el modelo de usuario definido en Mongoose
+const bcrypt = require("bcrypt");
+
 
 // Creación de usuarios
 export const createUser = async (req: Request, res: Response) => {
@@ -25,7 +27,7 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-//Obtener usuario
+//Obtener usuario por id
 export async function getUserById(req: Request, res: Response) {
   try {
     //Para usuario admin
@@ -38,6 +40,32 @@ export async function getUserById(req: Request, res: Response) {
     console.log(error);
     res.status(500).json({ message: "Error al obtener el usuario" });
   }
+}
+
+//Obtener JWT según email y password
+export async function getUserByCreds(req: Request, res: Response) {
+  try {
+    const email = req.query.email as string;
+    const password = req.query.password as string;
+
+    const user = await User.findOne({ email:email ,active: true });
+    await bcrypt.compare(password, user?.password, function(err: Error, response: boolean) {
+      if (err){
+        throw err;
+      }
+      if (response) {
+        console.log(`success ${response}`);
+        res.status(200).json(user);
+      }else{
+        console.log(`failure ${response}`);
+        res.status(400).json({message: "Contraseña incorrecta"});
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error al obtener el usuario" });
+  }
+
 }
 
 //Borrar usuarios
