@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, deleteUser, getUserByCreds, getUserById } from "./usuario.controller";
+import { authenticateToken, createUser, deleteUser, getUserByCreds, getUserById } from "./usuario.controller";
 
 const router = express.Router();
 
@@ -13,6 +13,6 @@ router.get("/ById/:_id", getUserById);
 router.get("/ByCreds/", getUserByCreds);
 
 //Ruta para inhabilitar al usuario según el ID (necesita token)
-router.delete("/:_id", deleteUser);
+router.delete("/:_id", authenticateToken, deleteUser);
 
 export default router;

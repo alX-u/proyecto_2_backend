@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import User from "./usuario.model"; // Importa el modelo de usuario definido en Mongoose
 const bcrypt = require("bcrypt");
-
-
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
 // Creación de usuarios
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -55,7 +56,10 @@ export async function getUserByCreds(req: Request, res: Response) {
       }
       if (response) {
         console.log(`success ${response}`);
-        res.status(200).json(user);
+        
+        const token = jwt.sign({user},process.env.JWTSecret,{ expiresIn: '10800s' });
+        console.log(token);
+        res.status(200).json({token});
       }else{
         console.log(`failure ${response}`);
         res.status(400).json({message: "Contraseña incorrecta"});
@@ -71,8 +75,7 @@ export async function getUserByCreds(req: Request, res: Response) {
 //Borrar usuarios
 export async function deleteUser(req: Request, res: Response) {
   //Aquí uso params
-  const { _id } = req.params;
-
+  const _id = req.params;
   try {
     //El usuario se inhabilita, en vez de borrarse
     const deletedUser = await User.findOneAndUpdate(
@@ -87,4 +90,20 @@ export async function deleteUser(req: Request, res: Response) {
     console.log(error);
     res.status(500).json({ message: "Error al eliminar el usuario" });
   }
+}
+
+
+export async function authenticateToken(req: Request, res: Response, next: Function) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWTSecret as string, (err: Error | null, user: any) => {
+    console.log(err);
+
+    if (err) return res.sendStatus(403);
+
+    next();
+  });
 }
