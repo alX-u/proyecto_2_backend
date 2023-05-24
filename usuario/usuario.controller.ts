@@ -7,7 +7,7 @@ dotenv.config();
 // Creación de usuarios
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { name, password, email, phone_number, address, role } = req.body; // Obtén las propiedades del cuerpo de la solicitud
+    const { name, password, email, phone_number, address } = req.body; // Obtén las propiedades del cuerpo de la solicitud
 
     // Crea un nuevo usuario utilizando el modelo de Mongoose
     const user = new User({
@@ -16,7 +16,6 @@ export const createUser = async (req: Request, res: Response) => {
       email,
       phone_number,
       address,
-      role,
     });
 
     // Guarda el usuario en la base de datos
