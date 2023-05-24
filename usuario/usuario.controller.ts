@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "./usuario.model"; // Importa el modelo de usuario definido en Mongoose
+import { generateToken } from "../auth/auth_token";
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
@@ -50,21 +51,24 @@ export async function getUserByCreds(req: Request, res: Response) {
     const password = req.query.password as string;
 
     const user = await User.findOne({ email:email ,active: true });
-    await bcrypt.compare(password, user?.password, function(err: Error, response: boolean) {
-      if (err){
-        throw err;
-      }
-      if (response) {
-        console.log(`success ${response}`);
-        
-        const token = jwt.sign({user},process.env.JWTSecret,{ expiresIn: '10800s' });
-        console.log(token);
-        res.status(200).json({token});
-      }else{
-        console.log(`failure ${response}`);
-        res.status(400).json({message: "Contraseña incorrecta"});
-      }
-    });
+    if (user) {
+      await bcrypt.compare(password, user?.password, async function(err: Error, response: boolean) {
+        if (err){
+          throw err;
+        }
+        if (response) {
+          console.log(`success ${response}`);
+          
+          const token = await generateToken(user._id.toHexString());
+          console.log(token);
+          res.status(200).json({token});
+        }else{
+          console.log(`failure ${response}`);
+          res.status(400).json({message: "Contraseña incorrecta"});
+        }
+      });
+    }
+    
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error al obtener el usuario" });
