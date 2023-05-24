@@ -91,19 +91,3 @@ export async function deleteUser(req: Request, res: Response) {
     res.status(500).json({ message: "Error al eliminar el usuario" });
   }
 }
-
-
-export async function authenticateToken(req: Request, res: Response, next: Function) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.JWTSecret as string, (err: Error | null, user: any) => {
-    console.log(err);
-
-    if (err) return res.sendStatus(403);
-
-    next();
-  });
-}
