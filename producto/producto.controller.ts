@@ -38,3 +38,25 @@ export async function getProductById(req: Request, res: Response) {
     res.status(500).json({ message: "Error al obtener el usuario" });
   }
 }
+
+//Obtener productos por Restaurante y/o por categoría
+export async function getProductsbyCategoryAndUser(
+  req: Request,
+  res: Response
+) {
+  try {
+    const { user, category } = req.query;
+    const filtro: any = {};
+    if (user) {
+      filtro.user = user;
+    }
+    if (category) {
+      filtro.category = category;
+    }
+    const productos = await Product.find(filtro);
+    res.status(200).json(productos);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error al obtener los productos" });
+  }
+}
