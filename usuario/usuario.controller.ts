@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import User from "./usuario.model"; // Importa el modelo de usuario definido en Mongoose
 import { generateToken } from "../auth/auth_token";
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 dotenv.config();
 // Creación de usuarios
 export const createUser = async (req: Request, res: Response) => {
@@ -49,30 +49,54 @@ export async function getUserByCreds(req: Request, res: Response) {
     const email = req.query.email as string;
     const password = req.query.password as string;
 
-    const user = await User.findOne({ email:email ,active: true });
+    const user = await User.findOne({ email: email, active: true });
     if (user) {
-      await bcrypt.compare(password, user?.password, async function(err: Error, response: boolean) {
-        if (err){
-          throw err;
+      await bcrypt.compare(
+        password,
+        user?.password,
+        async function (err: Error, response: boolean) {
+          if (err) {
+            throw err;
+          }
+          if (response) {
+            console.log(`success ${response}`);
+
+            const token = await generateToken(user._id.toHexString());
+            console.log(token);
+            res.status(200).json({ token });
+          } else {
+            console.log(`failure ${response}`);
+            res.status(400).json({ message: "Contraseña incorrecta" });
+          }
         }
-        if (response) {
-          console.log(`success ${response}`);
-          
-          const token = await generateToken(user._id.toHexString());
-          console.log(token);
-          res.status(200).json({token});
-        }else{
-          console.log(`failure ${response}`);
-          res.status(400).json({message: "Contraseña incorrecta"});
-        }
-      });
+      );
     }
-    
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error al obtener el usuario" });
   }
+}
 
+//Actualizar usuarios
+export async function updateUser(req: Request, res: Response) {
+  //Aquí opto por usar tanto params como body
+  const { _id } = req.params;
+  const updates = req.body;
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: _id, active: true },
+      updates,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("Error: ", error);
+    res.status(500).json({ message: "Error al actualizar el usuario." });
+  }
 }
 
 //Borrar usuarios

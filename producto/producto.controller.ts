@@ -80,3 +80,45 @@ export async function getProductCategoriesByUser(req: Request, res: Response) {
       .json({ message: "Error al obtener las categorías de productos" });
   }
 }
+
+//Actualizar producto
+export async function updateProduct(req: Request, res: Response) {
+  //Aquí opto por usar tanto params como body
+  const { _id } = req.params;
+  const updates = req.body;
+
+  try {
+    const updatedProduct = await Product.findOneAndUpdate(
+      { _id: _id, active: true },
+      updates,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    console.log("Error: ", error);
+    res.status(500).json({ message: "Error al actualizar el producto." });
+  }
+}
+
+//Borrar producto
+export async function deleteProduct(req: Request, res: Response) {
+  //Aquí uso params
+  const _id = req.params;
+  try {
+    //El usuario se inhabilita, en vez de borrarse
+    const deletedProduct = await Product.findOneAndUpdate(
+      { _id: _id, active: true },
+      { active: false }
+    );
+    if (!deletedProduct)
+      return res.status(404).json({ message: "Producto no encontrado" });
+
+    res.status(200).json({ message: "Producto inhabilitado correctamente." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error al eliminar el producto" });
+  }
+}
