@@ -2,6 +2,8 @@ import express from "express";
 const mongoose = require("mongoose");
 const cors = require("cors");
 import userRoutes from "./usuario/usuario.routes";
+import productRoutes from "./producto/producto.routes";
+import pedidoRoutes from "./pedido/pedido.routes";
 
 // Creación de la app
 const app = express();
@@ -28,6 +30,9 @@ app.use(express.json());
 
 //Rutas de usuarios
 app.use("/users", userRoutes);
+app.use("/products", productRoutes);
+app.use("/pedidos", pedidoRoutes);
+
 
 // Endpoint para 404
 app.use((req: express.Request, res: express.Response) => {

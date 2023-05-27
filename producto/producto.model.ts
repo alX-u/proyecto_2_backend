@@ -11,8 +11,7 @@ export interface IProduct {
 
 const productSchema = new Schema<IProduct>(
   {
-    name: {
-      type: String,
+    name: { type: String,
       required: true,
     },
     description: {
