@@ -9,12 +9,12 @@ import {
 
 const router = express.Router();
 
-router.post("/", createPedido);
+router.post("/", authenticateToken, createPedido);
 
-router.get("/ById/:_id", getPedidoById);
+router.get("/ById/:_id", authenticateToken, getPedidoById);
 
 //Ruta para obtener un producto según la categoría, el usuario y/o el texto de búsqueda
-router.get("/ByDateAndUser", getPedidobyDateAndUser);
+router.get("/ByDateAndUser", authenticateToken, getPedidobyDateAndUser);
 
 router.patch("/:_id", authenticateToken, updatedPedido);
 

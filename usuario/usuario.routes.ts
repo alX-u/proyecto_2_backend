@@ -20,7 +20,7 @@ router.get("/ById/:_id", getUserById);
 router.get("/ByCreds/", getUserByCreds);
 
 //Ruta para actualizar un usuario
-router.patch("/:_id", updateUser);
+router.patch("/:_id", authenticateToken, updateUser);
 
 //Ruta para inhabilitar al usuario según el ID (necesita token)
 router.delete("/:_id", authenticateToken, deleteUser);

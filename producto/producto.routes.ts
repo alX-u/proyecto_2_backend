@@ -12,7 +12,7 @@ import {
 const router = express.Router();
 
 // Ruta para crear un producto (necesita token)
-router.post("/", createProduct);
+router.post("/", authenticateToken, createProduct);
 
 //Ruta para obtener un producto según el ID
 router.get("/ById/:_id", getProductById);
@@ -27,6 +27,6 @@ router.get("/CategoriesByUser/:_id", getProductCategoriesByUser);
 router.patch("/:_id", authenticateToken, updateProduct);
 
 //Ruta para inhabilitar un producto según el ID (necesita token)
-router.delete("/:_id", deleteProduct);
+router.delete("/:_id", authenticateToken, deleteProduct);
 
 export default router;
