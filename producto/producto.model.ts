@@ -4,14 +4,15 @@ export interface IProduct {
   name: string;
   description: string;
   category: string;
-  price: number;
+  price: Number;
   user: Schema.Types.ObjectId;
   active: boolean;
 }
 
 const productSchema = new Schema<IProduct>(
   {
-    name: { type: String,
+    name: {
+      type: String,
       required: true,
     },
     description: {

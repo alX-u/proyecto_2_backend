@@ -58,7 +58,7 @@ export const createPedido = async (req: Request, res: Response) => {
     }
   }
 
-  export async function updateProduct(req: Request, res: Response) {
+  export async function updatedPedido(req: Request, res: Response) {
     //Aquí opto por usar tanto params como body
     const { _id } = req.params;
     const {comments, score} = req.body;
@@ -75,7 +75,7 @@ export const createPedido = async (req: Request, res: Response) => {
       res.status(200).json(updatedPedido);
     } catch (error) {
       console.log("Error: ", error);
-      res.status(500).json({ message: "Error al actualizar el producto." });
+      res.status(500).json({ message: "Error al actualizar el pedido." });
     }
   }
 
