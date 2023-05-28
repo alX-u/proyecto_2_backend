@@ -17,7 +17,7 @@ const productSchema = new Schema<IPedido>(
       ref: "users",
       required: true,
       validate: {
-        validator: async function (value) {
+        validator: async function (value: string) {
           const user = await model("user").findOne({
             _id: value,
           });
@@ -31,7 +31,7 @@ const productSchema = new Schema<IPedido>(
         ref: "users",
         required: true,
         validate: {
-          validator: async function (value) {
+          validator: async function (value: string) {
             const user = await model("user").findOne({
               _id: value,
             });
@@ -44,7 +44,7 @@ const productSchema = new Schema<IPedido>(
         ref:"products", 
         required: true, 
         validate: {
-            validator: async function (value){
+            validator: async function (value: string){
         const producto = await model("product").findOne({
             _id:value
         });
