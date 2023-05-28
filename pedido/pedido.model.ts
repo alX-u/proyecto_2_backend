@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 export interface IPedido {
   client: Schema.Types.ObjectId;
   seller: Schema.Types.ObjectId;
-  products: [{id: Schema.Types.ObjectId, quantity: number}];
+  products: [{ id: Schema.Types.ObjectId, quantity: number }];
   totalPrice: number;
   comments: String;
   score: Number;
@@ -26,34 +26,39 @@ const productSchema = new Schema<IPedido>(
         message: "Usuario no encontrado",
       },
     },
-    seller:{
+    seller: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+      validate: {
+        validator: async function (value) {
+          const user = await model("user").findOne({
+            _id: value,
+          });
+          return user !== null || user.active == true;
+        },
+        message: "Usuario no encontrado",
+      },
+    },
+    products: [{
+      producto: {
         type: Schema.Types.ObjectId,
-        ref: "users",
+        ref: "products",
         required: true,
         validate: {
           validator: async function (value) {
-            const user = await model("user").findOne({
-              _id: value,
+            const producto = await model("product").findOne({
+              _id: value
             });
-            return user !== null || user.active == true;
-          },
-          message: "Usuario no encontrado",
-        },
-      },
-    products: [{ producto:{type:Schema.Types.ObjectId, 
-        ref:"products", 
-        required: true, 
-        validate: {
-            validator: async function (value){
-        const producto = await model("product").findOne({
-            _id:value
-        });
-        if(producto==null || producto.active ==true){
-          throw new Error('No se encontro el producto');
+            if (producto == null || producto.active == true) {
+              throw new Error('No se encontro el producto');
+            }
+          }
         }
-      }}},
-      cantidad:{type:Number, required:true}}
-      ],
+      },
+      cantidad: { type: Number, required: true }
+    }
+    ],
     totalPrice: {
       type: Number,
       required: true
@@ -61,10 +66,10 @@ const productSchema = new Schema<IPedido>(
     comments: {
       type: String,
     },
-    score: { 
+    score: {
       type: Number
     },
-    
+
     active: { type: Boolean, default: true },
   },
   { timestamps: true, collection: "pedidos" }
