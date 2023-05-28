@@ -1,24 +1,24 @@
-import {createUser,
-    deleteUser,
-    getUserByCreds,
-    getUserById,
-    updateUser,
-} from "./usuario.controller";
-
-import {Request, Response } from "express";
+import { Request, Response } from "express";
 import request from "supertest";
-import {describe, expect, test} from '@jest/globals';
+import userRoutes from "./usuario.routes";
+import { describe, expect, it, test } from '@jest/globals';
 
-//describe("Create usuario", () => {});
+jest.useRealTimers();
 
-describe("Read usuario (id)", () => {
-    test("controller OK", ()=> {
-        const req = new Request('/users',
-        {method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer xxxxxxxx',
-        },
-        });
+//Pruebas de creación de usuario
+describe('createUser', () => {
+    it('should create a user', async () => {
+        const res = await request(userRoutes).post('/').send({
+            name: "Jaimelin tilin",
+            password: "tilinson pipon",
+            email: "tilin@email.com",
+            phone_number: "3046787667",
+            address: "casa tilina"
+        })
+        expect(res.statusCode).toBe(201);
     })
 });
+
+
+
+
