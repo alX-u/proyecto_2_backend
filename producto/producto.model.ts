@@ -29,7 +29,7 @@ const productSchema = new Schema<IProduct>(
       ref: "users",
       required: true,
       validate: {
-        validator: async function (value) {
+        validator: async function (value: string) {
           const user = await model("user").findOne({
             _id: value,
           });
