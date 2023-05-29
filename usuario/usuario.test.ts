@@ -132,6 +132,7 @@ describe("readUser (credenciales)", () => {
       send: jest.fn(),
       json: jest.fn().mockReturnThis(),
     } as unknown as Response;
+    
     await getUserByCreds(req as Request, res as Response);
     expect(res.status).toBeCalled();
   });

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "./usuario.model"; // Importa el modelo de usuario definido en Mongoose
 import { generateToken } from "../auth/auth_token";
 const bcrypt = require("bcrypt");
+
 // Creación de usuarios
 export const createUser = async (req: Request, res: Response, session: any) => {
   try {
@@ -17,10 +18,16 @@ export const createUser = async (req: Request, res: Response, session: any) => {
     });
 
     // Guarda el usuario en la base de datos a través de la transacción. Si no hay transacción, funciona normalmente
-    await user.save({ session: session });
+    //puro pacooooooo
+    if (session && typeof session === 'object' && typeof session.startTransaction === 'function' && typeof session.commitTransaction === 'function' && typeof session.abortTransaction === 'function') {
+      await user.save({ session: session });
+    } else {
+      await user.save();
+    }
 
     res.status(201).json({ message: "Usuario creado exitosamente", user });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Error al crear el usuario", error });
   }
 };
