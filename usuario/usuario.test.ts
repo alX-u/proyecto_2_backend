@@ -191,6 +191,7 @@ describe("updateUser", () => {
       body: {
         _id: '646cf3445f783334b5e91092',
         phone_number: "3003664860",
+        session
       },
     };
     const res: Partial<Response> = {
@@ -198,7 +199,7 @@ describe("updateUser", () => {
       send: jest.fn(),
       json: jest.fn(),
     } as unknown as Response;
-    await updateUser(req as Request, res as Response, session);
+    await updateUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(200);
     //Abortamos transacción para que no escriba en la base de datos
   
@@ -211,6 +212,7 @@ describe("updateUser", () => {
       body: {
         _id:'646cf3445f783334b5e91092',
         email: "3003664860",
+        session
       },
     };
     const res: Partial<Response> = {
@@ -218,7 +220,7 @@ describe("updateUser", () => {
       send: jest.fn(),
       json: jest.fn(),
     } as unknown as Response;
-    await updateUser(req as Request, res as Response, session);
+    await updateUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     //Abortamos transacción para que no escriba en la base de datos
     
@@ -231,13 +233,14 @@ describe("deleteUser", () => {
       params: {
         _id: '646cf3445f783334b5e91092',
       },
+      body: {session}
     };
     const res: Partial<Response> = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
       json: jest.fn(),
     } as unknown as Response;
-    await deleteUser(req as Request, res as Response, session);
+    await deleteUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(200);
     //Abortamos transacción para que no escriba en la base de datos
   
@@ -249,13 +252,14 @@ describe("deleteUser", () => {
       params: {
         _id:'1',
       },
+      body: {session}
     };
     const res: Partial<Response> = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
       json: jest.fn(),
     } as unknown as Response;
-    await deleteUser(req as Request, res as Response, session);
+    await deleteUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     //Abortamos transacción para que no escriba en la base de datos
     

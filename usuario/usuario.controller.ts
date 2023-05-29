@@ -80,9 +80,9 @@ export async function getUserByCreds(req: Request, res: Response) {
 }
 
 //Actualizar usuarios
-export async function updateUser(req: Request, res: Response,session: any ) {
+export async function updateUser(req: Request, res: Response) {
   //Aquí opto por usar tanto params como body
-  const { _id, ...updates } = req.body;
+  const { _id, session, ...updates } = req.body;
   
   try {
     const updatedUser = await User.findOneAndUpdate(
@@ -103,9 +103,10 @@ export async function updateUser(req: Request, res: Response,session: any ) {
 }
 
 //Borrar usuarios
-export async function deleteUser(req: Request, res: Response,session:any ) {
+export async function deleteUser(req: Request, res: Response) {
   //Aquí uso params
   const _id = req.params;
+  const {session} = req.body
   try {
     //El usuario se inhabilita, en vez de borrarse  `
     const deletedUser = await User.findOneAndUpdate(
