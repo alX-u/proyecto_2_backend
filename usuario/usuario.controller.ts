@@ -4,9 +4,9 @@ import { generateToken } from "../auth/auth_token";
 const bcrypt = require("bcrypt");
 
 // Creación de usuarios
-export const createUser = async (req: Request, res: Response, session: any) => {
+export const createUser = async (req: Request, res: Response) => {
   try {
-    const { name, password, email, phone_number, address } = req.body; // Obtén las propiedades del cuerpo de la solicitud
+    const { name, password, email, phone_number, address, session } = req.body; // Obtén las propiedades del cuerpo de la solicitud
 
     // Crea un nuevo usuario utilizando el modelo de Mongoose
     const user = new User({

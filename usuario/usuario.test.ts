@@ -43,6 +43,7 @@ describe("createUser", () => {
         email: "hola@gmail.com",
         phone_number: "3003664859",
         address: "Calle ndoinasdoi",
+        session
       },
     };
     const res: Partial<Response> = {
@@ -50,7 +51,7 @@ describe("createUser", () => {
       send: jest.fn(),
       json: jest.fn(),
     } as unknown as Response;
-    await createUser(req as Request, res as Response, session);
+    await createUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(201);
     //Abortamos transacción para que no escriba en la base de datos
   
@@ -65,6 +66,7 @@ describe("createUser", () => {
         password: "hola123",
         email: "holagmailcom",
         phone_number: "34322",
+        session
       },
     };
     const res: Partial<Response> = {
@@ -72,7 +74,7 @@ describe("createUser", () => {
       send: jest.fn(),
       json: jest.fn(),
     } as unknown as Response;
-    await createUser(req as Request, res as Response, session);
+    await createUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     //Abortamos transacción para que no escriba en la base de datos
     
