@@ -3,7 +3,7 @@ import request from "supertest";
 const mongoose = require("mongoose");
 import userRoutes from "./usuario.routes";
 import { getUserById } from "./usuario.controller";
-import { describe, expect, it, test, beforeEach, afterEach, beforeAll, afterAll, jest} from '@jest/globals';
+import { describe, expect, it, test, beforeAll, afterAll, jest } from '@jest/globals';
 
 
 /* Opening database connection before all tests. */
@@ -11,12 +11,11 @@ beforeAll(async () => {
     jest.setTimeout(10000);
     const url = `mongodb+srv://vertel:h3nt3DTE804Kdx76@proyecto2backend.yunr3x4.mongodb.net/`;
     await mongoose.connect(url);
-    console.log("wanpatan")
 });
 
 /* Closing database connection after all tests. */
 afterAll(async () => {
-    await mongoose();
+    await mongoose.connection.close();
 });
 
 //Pruebas de creación de usuario
@@ -38,15 +37,23 @@ afterAll(async () => {
 
 describe("readUser (id)", () => {
     it("controller OK", async () => {
-        const req: Partial<Request> = {params: {_id: "646cf3445f783334b5e91092"}};
+        const req: Partial<Request> = { params: { _id: "646cf3445f783334b5e91092" } };
         const res: Partial<Response> = {
             status: jest.fn().mockReturnThis(),
             send: jest.fn(),
             json: jest.fn()
-          }as unknown as Response;
-        getUserById(req as Request,res as Response);
+        } as unknown as Response;
+        getUserById(req as Request, res as Response);
         expect(1).toBe(1);
     });
+});
+
+describe('create user', () => {
+    test('should create', async () => {
+        const res = await request(userRoutes).post('/');
+        expect(res.statusCode).toBe(201);
+        expect(res.body.length).toBeGreaterThan(0);
+    })
 });
 
 
