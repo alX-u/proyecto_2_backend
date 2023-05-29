@@ -20,6 +20,7 @@ beforeAll(async () => {
 /* Closing database connection after all tests. */
 afterAll(async () => {
     await mongoose.connection.close();
+    await mongoose.connection.close();
 });
 
 //Pruebas de creación de usuario
