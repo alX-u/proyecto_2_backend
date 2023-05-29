@@ -1,111 +1,160 @@
-import express,{ Request, Response } from "express";
+import express, { Request, Response } from "express";
 const cors = require("cors");
 import request from "supertest";
 const mongoose = require("mongoose");
 import userRoutes from "./usuario.routes";
-import { getUserByCreds, getUserById } from "./usuario.controller";
-import { describe, expect, it, test, beforeEach, afterEach, beforeAll, afterAll, jest} from '@jest/globals';
+import { createUser, getUserByCreds, getUserById } from "./usuario.controller";
+import {
+  describe,
+  expect,
+  test,
+  beforeAll,
+  afterAll,
+  jest,
+} from "@jest/globals";
 const app = express();
-
 
 /* Opening database connection before all tests. */
 beforeAll(async () => {
-    app.use(cors());
-    app.use(express.json());
-    app.use("/", userRoutes);
-    const url = `mongodb+srv://vertel:h3nt3DTE804Kdx76@proyecto2backend.yunr3x4.mongodb.net/`;
-    await mongoose.connect(url);
+  app.use(cors());
+  app.use(express.json());
+  app.use("/", userRoutes);
+  const url = `mongodb+srv://vertel:h3nt3DTE804Kdx76@proyecto2backend.yunr3x4.mongodb.net/`;
+  await mongoose.connect(url);
 });
 
 /* Closing database connection after all tests. */
 afterAll(async () => {
-    await mongoose.connection.close();
-    await mongoose.connection.close();
+  await mongoose.connection.close();
+  await mongoose.connection.close();
 });
 
 //Pruebas de creación de usuario
-// describe('createUser', () => {
-//     test('createUser Endpoint OK', async () => {
-//         const { status} = await request(userRoutes).post('/').send({
-//             name: "Jaimelin tilin",
-//             password: "tilinson pipon",
-//             email: "tilin@email.com",
-//             phone_number: "3046787667",
-//             address: "casa tilina"
-//         }).set("Accept","application/json")
-//         console.log("goaoao")
-//         expect(status).toBe(201);
-//     }, 20000);
-// });
+describe("createUser", () => {
+  beforeEach(async () => {
+    // Crear una nueva sesión de transacción para cada prueba
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
+    // Asignar la sesión a la conexión predeterminada de Mongoose
+    mongoose.set("session", session);
+  });
+
+  afterEach(async () => {
+    // Obtener la sesión de la conexión predeterminada de Mongoose
+    const session = mongoose.get("session");
+
+    // Abortar la transacción y finalizar la sesión
+    await session.abortTransaction();
+    session.endSession();
+  });
+
+  test("controller OK", async () => {
+    const session = mongoose.get("session");
+    const req: Partial<Request> = {
+      body: {
+        name: "HEY YO ITS THE A-TRAIN BABY",
+        password: "hola123",
+        email: "hola@gmail.com",
+        phone_number: "3003664859",
+        address: "Calle ndoinasdoi",
+      },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await createUser(req as Request, res as Response, session);
+    expect(res.status).toHaveBeenCalledWith(201);
+  });
+});
+
+//Pruebas de lectura de usuario por el ID
 describe("readUser (id)", () => {
-    test("controller OK", async () => {
-        const req: Partial<Request> = {params: {_id: "646cf3445f783334b5e91092"}};
-        const res: Partial<Response> = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-            json: jest.fn()
-          }as unknown as Response;
-        await getUserById(req as Request,res as Response);
-        expect(res.status).toHaveBeenCalledWith(200);
-    });
-    test("controller Error", async () => {
-        //_id vacío
-        const req: Partial<Request> = {params: {_id: ""}};
-        const res: Partial<Response> = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-            json: jest.fn()
-          }as unknown as Response;
-        await getUserById(req as Request,res as Response);
-        expect(res.status).toHaveBeenCalledWith(500);
-    });
-    test("Endpoint OK", async () => {
-        const testId = "646cf3445f783334b5e91092";
-        const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
-        expect(status).toBe(200);
-    });
-    test("Endpoint Error", async () => {
-        const testId = "hola profe";
-        const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
-        expect(status).toBe(500);
-    });
+  test("controller OK", async () => {
+    const req: Partial<Request> = {
+      params: { _id: "646cf3445f783334b5e91092" },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await getUserById(req as Request, res as Response);
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  test("controller Error", async () => {
+    //_id vacío
+    const req: Partial<Request> = { params: { _id: "" } };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await getUserById(req as Request, res as Response);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+
+  test("Endpoint OK", async () => {
+    const testId = "646cf3445f783334b5e91092";
+    const { status } = await request(app)
+      .get(`/ById/${testId}`)
+      .set("Accept", "application/json");
+    expect(status).toBe(200);
+  });
+
+  test("Endpoint Error", async () => {
+    const testId = "hola profe";
+    const { status } = await request(app)
+      .get(`/ById/${testId}`)
+      .set("Accept", "application/json");
+    expect(status).toBe(500);
+  });
 });
 
+//Pruebas de lectura de usuario por las credenciales
 describe("readUser (credenciales)", () => {
-    test("controller OK", async () => {
-        const req: Partial<Request> = {query: {email: "piter@abc.com", password: "piter"}};
-        const res: Partial<Response> = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-            json: jest.fn()
-          }as unknown as Response;
-        await getUserByCreds(req as Request,res as Response);
-        expect(req.query).toBeCalled();
-        expect(res.status).toHaveBeenCalledWith(200);
-    });
-    test("controller Error", async () => {
-        //"email" bad format
-        const req: Partial<Request> = {params: {email: "piter", password: "piter"}};
-        const res: Partial<Response> = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-            json: jest.fn()
-          }as unknown as Response;
-        await getUserByCreds(req as Request,res as Response);
-        expect(res.status).toHaveBeenCalledWith(500);
-    });
-    test("Endpoint OK", async () => {
-        const testId = "646cf3445f783334b5e91092";
-        const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
-        expect(status).toBe(200);
-    });
-    test("Endpoint Error", async () => {
-        const testId = "hola profe";
-        const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
-        expect(status).toBe(500);
-    });
+  test("controller OK", async () => {
+    const req: Partial<Request> = {
+      query: { email: "piter@abc.com", password: "piter" },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await getUserByCreds(req as Request, res as Response);
+    expect(req.query).toBeCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  test("controller Error", async () => {
+    //"email" bad format
+    const req: Partial<Request> = {
+      params: { email: "piter", password: "piter" },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await getUserByCreds(req as Request, res as Response);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+
+  test("Endpoint OK", async () => {
+    const testId = "646cf3445f783334b5e91092";
+    const { status } = await request(app)
+      .get(`/ById/${testId}`)
+      .set("Accept", "application/json");
+    expect(status).toBe(200);
+  });
+
+  test("Endpoint Error", async () => {
+    const testId = "hola profe";
+    const { status } = await request(app)
+      .get(`/ById/${testId}`)
+      .set("Accept", "application/json");
+    expect(status).toBe(500);
+  });
 });
-
-
-

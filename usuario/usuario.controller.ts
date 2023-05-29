@@ -3,7 +3,7 @@ import User from "./usuario.model"; // Importa el modelo de usuario definido en 
 import { generateToken } from "../auth/auth_token";
 const bcrypt = require("bcrypt");
 // Creación de usuarios
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response, session: any) => {
   try {
     const { name, password, email, phone_number, address } = req.body; // Obtén las propiedades del cuerpo de la solicitud
 
@@ -16,11 +16,12 @@ export const createUser = async (req: Request, res: Response) => {
       address,
     });
 
-    // Guarda el usuario en la base de datos
-    await user.save();
+    // Guarda el usuario en la base de datos a través de la transacción
+    await user.save({ session: session });
 
     res.status(201).json({ message: "Usuario creado exitosamente", user });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Error al crear el usuario", error });
   }
 };
@@ -62,7 +63,7 @@ export async function getUserByCreds(req: Request, res: Response) {
           }
         }
       );
-    }else{
+    } else {
       res.status(400).json({ message: "No existe usuario con este email" });
     }
   } catch (error) {
