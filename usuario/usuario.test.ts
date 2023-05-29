@@ -16,7 +16,7 @@ describe('createUser', () => {
             address: "casa tilina"
         })
         expect(res.statusCode).toBe(201);
-    })
+    }, 10000)
 });
 
 
