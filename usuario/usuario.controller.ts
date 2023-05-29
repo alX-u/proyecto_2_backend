@@ -80,11 +80,10 @@ export async function getUserByCreds(req: Request, res: Response) {
 }
 
 //Actualizar usuarios
-export async function updateUser(req: Request, res: Response) {
+export async function updateUser(req: Request, res: Response,session: any ) {
   //Aquí opto por usar tanto params como body
-  const { _id } = req.params;
-  const updates = req.body;
-
+  const { _id, ...updates } = req.body;
+  
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: _id, active: true },
@@ -92,8 +91,10 @@ export async function updateUser(req: Request, res: Response) {
       {
         new: true,
         runValidators: true,
-      }
+        session:session
+      },
     );
+
     res.status(200).json(updatedUser);
   } catch (error) {
     console.log("Error: ", error);
@@ -102,14 +103,15 @@ export async function updateUser(req: Request, res: Response) {
 }
 
 //Borrar usuarios
-export async function deleteUser(req: Request, res: Response) {
+export async function deleteUser(req: Request, res: Response,session:any ) {
   //Aquí uso params
   const _id = req.params;
   try {
     //El usuario se inhabilita, en vez de borrarse
     const deletedUser = await User.findOneAndUpdate(
       { _id: _id, active: true },
-      { active: false }
+      { active: false },
+      { session: session }
     );
     if (!deletedUser)
       return res.status(404).json({ message: "Usuario no encontrado" });

@@ -3,7 +3,7 @@ const cors = require("cors");
 import request from "supertest";
 const mongoose = require("mongoose");
 import userRoutes from "./usuario.routes";
-import { createUser, getUserByCreds, getUserById } from "./usuario.controller";
+import { createUser, getUserByCreds, getUserById , updateUser, deleteUser} from "./usuario.controller";
 import {
   describe,
   expect,
@@ -165,5 +165,82 @@ describe("readUser (credenciales)", () => {
       .get(`/ById/${testId}`)
       .set("Accept", "application/json");
     expect(status).toBe(500);
+  });
+});
+
+describe("updateUser", () => {
+  test("controller OK", async () => {
+    const req: Partial<Request> = {
+      body: {
+        _id: '646cf3445f783334b5e91092',
+        phone_number: "3003664860",
+      },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await updateUser(req as Request, res as Response, session);
+    expect(res.status).toHaveBeenCalledWith(200);
+    //Abortamos transacción para que no escriba en la base de datos
+  
+  });
+
+  test("controller ERROR", async () => {
+    //Iniciamos transacción
+    
+    const req: Partial<Request> = {
+      body: {
+        _id:'646cf3445f783334b5e91092',
+        email: "3003664860",
+      },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await updateUser(req as Request, res as Response, session);
+    expect(res.status).toHaveBeenCalledWith(500);
+    //Abortamos transacción para que no escriba en la base de datos
+    
+  });
+});
+
+describe("deleteUser", () => {
+  test("controller OK", async () => {
+    const req: Partial<Request> = {
+      params: {
+        _id: '646cf3445f783334b5e91092',
+      },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await deleteUser(req as Request, res as Response, session);
+    expect(res.status).toHaveBeenCalledWith(200);
+    //Abortamos transacción para que no escriba en la base de datos
+  
+  });
+
+  test("controller ERROR", async () => {
+    //Iniciamos transacción
+    const req: Partial<Request> = {
+      params: {
+        _id:'1',
+      },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await deleteUser(req as Request, res as Response, session);
+    expect(res.status).toHaveBeenCalledWith(500);
+    //Abortamos transacción para que no escriba en la base de datos
+    
   });
 });
