@@ -21,7 +21,6 @@ export const createUser = async (req: Request, res: Response, session: any) => {
 
     res.status(201).json({ message: "Usuario creado exitosamente", user });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Error al crear el usuario", error });
   }
 };
@@ -57,8 +56,10 @@ export async function getUserByCreds(req: Request, res: Response) {
           }
           if (response) {
             const token = await generateToken(user._id.toHexString());
-            res.status(200).json({ token });
+            console.log("200");
+            return res.status(200).json({ token });
           } else {
+            console.log("400");
             res.status(400).json({ message: "Contraseña incorrecta" });
           }
         }
