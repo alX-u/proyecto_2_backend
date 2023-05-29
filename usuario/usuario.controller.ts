@@ -2,9 +2,6 @@ import { Request, Response } from "express";
 import User from "./usuario.model"; // Importa el modelo de usuario definido en Mongoose
 import { generateToken } from "../auth/auth_token";
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-dotenv.config();
 // Creación de usuarios
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -36,10 +33,10 @@ export async function getUserById(req: Request, res: Response) {
 
     const user = await User.findOne({ _id: _id, active: true });
 
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error al obtener el usuario" });
+    return res.status(500).json({ message: "Error al obtener el usuario" });
   }
 }
 
