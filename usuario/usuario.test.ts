@@ -49,9 +49,15 @@ describe("readUser (id)", () => {
 });
 
 describe('create user', () => {
-    test('should create', async () => {
-        const res = await request(userRoutes).post('/');
-        expect(res.statusCode).toBe(201);
+    it('should create', async () => {
+        const res = await request(userRoutes).post('/').send({
+            name: "Jaimelin tilin",
+            password: "tilinson pipon",
+            email: "tilin@email.com",
+            phone_number: "3046787667",
+            address: "casa tilina"
+        });
+        console.log('Holaaa')
         expect(res.body.length).toBeGreaterThan(0);
     })
 });
