@@ -79,6 +79,21 @@ describe("createUser", () => {
     //Abortamos transacción para que no escriba en la base de datos
     
   });
+
+  test("Endpoint OK", async () => {
+      //const testId = "646cf3445f783334b5e91092";
+      const { status } = await request(app)
+        .post('/').send({
+          name: "HEY YO ITS THE A-TRAIN BABY",
+          password: "hola123",
+          email: "hola@gmail.com",
+          phone_number: "3003664859",
+          address: "Calle ndoinasdoi",
+          session
+        })
+        .set("Accept", "application/json");
+      expect(status).toBe(201);
+    },10000);
 });
 
 //Pruebas de lectura de usuario por el ID

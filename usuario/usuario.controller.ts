@@ -107,7 +107,7 @@ export async function deleteUser(req: Request, res: Response,session:any ) {
   //Aquí uso params
   const _id = req.params;
   try {
-    //El usuario se inhabilita, en vez de borrarse
+    //El usuario se inhabilita, en vez de borrarse  `
     const deletedUser = await User.findOneAndUpdate(
       { _id: _id, active: true },
       { active: false },
