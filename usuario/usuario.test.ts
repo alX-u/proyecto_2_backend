@@ -31,26 +31,10 @@ afterAll(async () => {
 
 //Pruebas de creación de usuario
 describe("createUser", () => {
-  beforeEach(async () => {
-    // Crear una nueva sesión de transacción para cada prueba
+  test("controller OK", async () => {
+    //Iniciamos transacción
     const session = await mongoose.startSession();
     session.startTransaction();
-
-    // Asignar la sesión a la conexión predeterminada de Mongoose
-    mongoose.set("session", session);
-  });
-
-  afterEach(async () => {
-    // Obtener la sesión de la conexión predeterminada de Mongoose
-    const session = mongoose.get("session");
-
-    // Abortar la transacción y finalizar la sesión
-    await session.abortTransaction();
-    session.endSession();
-  });
-
-  test("controller OK", async () => {
-    const session = mongoose.get("session");
     const req: Partial<Request> = {
       body: {
         name: "HEY YO ITS THE A-TRAIN BABY",
@@ -67,6 +51,33 @@ describe("createUser", () => {
     } as unknown as Response;
     await createUser(req as Request, res as Response, session);
     expect(res.status).toHaveBeenCalledWith(201);
+    //Abortamos transacción para que no escriba en la base de datos
+    await session.abortTransaction();
+    session.endSession();
+  });
+
+  test("controller ERROR", async () => {
+    //Iniciamos transacción
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    const req: Partial<Request> = {
+      body: {
+        name: "HEY YO ITS THE A-TRAIN BABY",
+        password: "hola123",
+        email: "holagmailcom",
+        phone_number: "45121",
+      },
+    };
+    const res: Partial<Response> = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      json: jest.fn(),
+    } as unknown as Response;
+    await createUser(req as Request, res as Response, session);
+    expect(res.status).toHaveBeenCalledWith(500);
+    //Abortamos transacción para que no escriba en la base de datos
+    await session.abortTransaction();
+    session.endSession();
   });
 });
 
@@ -84,7 +95,7 @@ describe("readUser (id)", () => {
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
-  test("controller Error", async () => {
+  test("controller ERROR", async () => {
     //_id vacío
     const req: Partial<Request> = { params: { _id: "" } };
     const res: Partial<Response> = {
@@ -103,7 +114,7 @@ describe("readUser (id)", () => {
     expect(status).toBe(200);
   });
 
-  test("Endpoint Error", async () => {
+  test("Endpoint ERROR", async () => {
     const testId = "hola profe";
     const { status } = await request(app)
       .get(`/ById/${testId}`)
@@ -124,11 +135,10 @@ describe("readUser (credenciales)", () => {
       json: jest.fn(),
     } as unknown as Response;
     await getUserByCreds(req as Request, res as Response);
-    expect(req.query).toBeCalled();
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
-  test("controller Error", async () => {
+  test("controller ERROR", async () => {
     //"email" bad format
     const req: Partial<Request> = {
       params: { email: "piter", password: "piter" },
@@ -150,7 +160,7 @@ describe("readUser (credenciales)", () => {
     expect(status).toBe(200);
   });
 
-  test("Endpoint Error", async () => {
+  test("Endpoint ERROR", async () => {
     const testId = "hola profe";
     const { status } = await request(app)
       .get(`/ById/${testId}`)

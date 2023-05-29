@@ -16,7 +16,7 @@ export const createUser = async (req: Request, res: Response, session: any) => {
       address,
     });
 
-    // Guarda el usuario en la base de datos a través de la transacción
+    // Guarda el usuario en la base de datos a través de la transacción. Si no hay transacción, funciona normalmente
     await user.save({ session: session });
 
     res.status(201).json({ message: "Usuario creado exitosamente", user });
