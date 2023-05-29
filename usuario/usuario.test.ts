@@ -3,7 +3,7 @@ const cors = require("cors");
 import request from "supertest";
 const mongoose = require("mongoose");
 import userRoutes from "./usuario.routes";
-import { getUserById } from "./usuario.controller";
+import { getUserByCreds, getUserById } from "./usuario.controller";
 import { describe, expect, it, test, beforeEach, afterEach, beforeAll, afterAll, jest} from '@jest/globals';
 const app = express();
 
@@ -49,11 +49,62 @@ describe("readUser (id)", () => {
         await getUserById(req as Request,res as Response);
         expect(res.status).toHaveBeenCalledWith(200);
     });
+    test("controller Error", async () => {
+        //_id vacío
+        const req: Partial<Request> = {params: {_id: ""}};
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn()
+          }as unknown as Response;
+        await getUserById(req as Request,res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
     test("Endpoint OK", async () => {
         const testId = "646cf3445f783334b5e91092";
         const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
         expect(status).toBe(200);
-    })
+    });
+    test("Endpoint Error", async () => {
+        const testId = "hola profe";
+        const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
+        expect(status).toBe(500);
+    });
+});
+
+describe("readUser (credenciales)", () => {
+    test("controller OK", async () => {
+        const req: Partial<Request> = {query: {email: "piter@abc.com", password: "piter"}};
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn()
+          }as unknown as Response;
+        await getUserByCreds(req as Request,res as Response);
+        expect(req.query).toBeCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
+    });
+    test("controller Error", async () => {
+        //"email" bad format
+        const req: Partial<Request> = {params: {email: "piter", password: "piter"}};
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn()
+          }as unknown as Response;
+        await getUserByCreds(req as Request,res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
+    test("Endpoint OK", async () => {
+        const testId = "646cf3445f783334b5e91092";
+        const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
+        expect(status).toBe(200);
+    });
+    test("Endpoint Error", async () => {
+        const testId = "hola profe";
+        const {status} = await request(app).get(`/ById/${testId}`).set('Accept', 'application/json');
+        expect(status).toBe(500);
+    });
 });
 
 

@@ -4,6 +4,9 @@ const cors = require("cors");
 import userRoutes from "./usuario/usuario.routes";
 import productRoutes from "./producto/producto.routes";
 import pedidoRoutes from "./pedido/pedido.routes";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // Creación de la app
 const app = express();

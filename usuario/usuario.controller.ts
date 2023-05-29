@@ -35,7 +35,6 @@ export async function getUserById(req: Request, res: Response) {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: "Error al obtener el usuario" });
   }
 }
@@ -56,20 +55,17 @@ export async function getUserByCreds(req: Request, res: Response) {
             throw err;
           }
           if (response) {
-            console.log(`success ${response}`);
-
             const token = await generateToken(user._id.toHexString());
-            console.log(token);
             res.status(200).json({ token });
           } else {
-            console.log(`failure ${response}`);
             res.status(400).json({ message: "Contraseña incorrecta" });
           }
         }
       );
+    }else{
+      res.status(400).json({ message: "No existe usuario con este email" });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Error al obtener el usuario" });
   }
 }
