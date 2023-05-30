@@ -115,85 +115,102 @@ describe('read product (id)', () => {
     });
 });
 
+//Pruebas de obtener producto por usuario, texto de búsqueda y/o por categoría
+describe('read product (user, search and/or category)', () => {
+    test("controller OK", async () => {
+        const req: Partial<Request> = {
+            query: { user: "646cf3445f783334b5e91092" },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn().mockReturnThis(),
+        } as unknown as Response;
 
+        await getProductsbyCategoryAndUser(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(200);
+    })
+});
 
+//Pruebas de actualizar producto
 describe("updateProduct", () => {
     test("controller OK", async () => {
-      const req: Partial<Request> = {
-        params:{_id: '64753d8481a4f535567542fb'},
-        body: {
-          description: "nueva description",
-          session
-        },
-      };
-      const res: Partial<Response> = {
-        status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
-        json: jest.fn(),
-      } as unknown as Response;
-      await updateProduct(req as Request, res as Response);
-      expect(res.status).toHaveBeenCalledWith(200);
-      //Abortamos transacción para que no escriba en la base de datos
-  
+        const req: Partial<Request> = {
+            params: { _id: '64753d8481a4f535567542fb' },
+            body: {
+                description: "nueva description",
+                session
+            },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn(),
+        } as unknown as Response;
+        await updateProduct(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(200);
+        //Abortamos transacción para que no escriba en la base de datos
+
     });
-  
+
     test("controller ERROR", async () => {
-      //Iniciamos transacción
-  
-      const req: Partial<Request> = {
-        params:{_id: '1'},
-        body: {
-          description: "nueva description",
-          session
-        },
-      };
-      const res: Partial<Response> = {
-        status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
-        json: jest.fn(),
-      } as unknown as Response;
-      await updateProduct(req as Request, res as Response);
-      expect(res.status).toHaveBeenCalledWith(500);
-      //Abortamos transacción para que no escriba en la base de datos
-  
+        //Iniciamos transacción
+
+        const req: Partial<Request> = {
+            params: { _id: '1' },
+            body: {
+                description: "nueva description",
+                session
+            },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn(),
+        } as unknown as Response;
+        await updateProduct(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
+        //Abortamos transacción para que no escriba en la base de datos
+
     });
-  });
-  
-  describe("deleteProduct", () => {
+});
+
+//Pruebas de borrar producto
+describe("deleteProduct", () => {
     test("controller OK", async () => {
-      const req: Partial<Request> = {
-        params: {
-          _id: '64753d8481a4f535567542fb',
-        },
-        body: { session }
-      };
-      const res: Partial<Response> = {
-        status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
-        json: jest.fn(),
-      } as unknown as Response;
-      await deleteProduct(req as Request, res as Response);
-      expect(res.status).toHaveBeenCalledWith(200);
-      //Abortamos transacción para que no escriba en la base de datos
-  
+        const req: Partial<Request> = {
+            params: {
+                _id: '64753d8481a4f535567542fb',
+            },
+            body: { session }
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn(),
+        } as unknown as Response;
+        await deleteProduct(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(200);
+        //Abortamos transacción para que no escriba en la base de datos
+
     });
-  
+
     test("controller ERROR", async () => {
-      //Iniciamos transacción
-      const req: Partial<Request> = {
-        params: {
-          _id: '1',
-        },
-        body: { session }
-      };
-      const res: Partial<Response> = {
-        status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
-        json: jest.fn(),
-      } as unknown as Response;
-      await deleteProduct(req as Request, res as Response);
-      expect(res.status).toHaveBeenCalledWith(500);
-      //Abortamos transacción para que no escriba en la base de datos
-  
+        //Iniciamos transacción
+        const req: Partial<Request> = {
+            params: {
+                _id: '1',
+            },
+            body: { session }
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn(),
+        } as unknown as Response;
+        await deleteProduct(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
+        //Abortamos transacción para que no escriba en la base de datos
+
     });
-  });
+});
