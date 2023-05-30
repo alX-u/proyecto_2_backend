@@ -74,8 +74,9 @@ export async function getProductCategoriesByUser(req: Request, res: Response) {
 
     const productos = await Product.find({ user: userId, active: true });
     const categories = productos.map((producto: IProduct) => producto.category);
-
+    console.log(productos);
     res.status(200).json(categories);
+
   } catch (error) {
     console.log(error);
     res

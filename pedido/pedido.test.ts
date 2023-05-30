@@ -20,6 +20,7 @@ import {
 import request from "supertest";
 import User from '../usuario/usuario.model';
 import Product from '../producto/producto.model';
+import { authenticateToken } from "../auth/auth_token";
 
 //Vars
 const app = express();
@@ -88,7 +89,7 @@ describe('create pedido', () => {
 describe("readPedido", () => {
   test("controller OK", async () => {
 		const req: Partial<Request> = {
-				params: { userId: "647569f3f151bd7554a78272" },
+				params: { _id: "647569f3f151bd7554a78272" },
 		};
 		const res: Partial<Response> = {
 				status: jest.fn().mockReturnThis(),
@@ -97,4 +98,60 @@ describe("readPedido", () => {
 		await getPedidoById(req as Request, res as Response);
 		expect(res.status).toHaveBeenCalledWith(200);
 	});
+
+    test("controller ERROR", async () => {
+		const req: Partial<Request> = {
+				params: { _id: "" },
+		};
+		const res: Partial<Response> = {
+				status: jest.fn().mockReturnThis(),
+				json: jest.fn(),
+		} as unknown as Response;
+		await getPedidoById(req as Request, res as Response);
+		expect(res.status).toHaveBeenCalledWith(500);
+	}); 
 });
+
+describe("updateUser", () => {
+    test("controller OK", async () => {
+      const req: Partial<Request> = {
+        params:{_id:"647569f3f151bd7554a78272"},
+        body: {
+          comments: "muy bueno",
+          score:8,
+          session
+        },
+      };
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+        json: jest.fn(),
+      } as unknown as Response;
+      await updatedPedido(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(200);
+      //Abortamos transacción para que no escriba en la base de datos
+  
+    });
+  
+    test("controller ERROR", async () => {
+      //Iniciamos transacción
+  
+      const req: Partial<Request> = {
+        params:{_id:"1"},
+        body: {
+          comments: "muy bueno",
+          score:8,
+          session
+        },
+      };
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+        json: jest.fn(),
+      } as unknown as Response;
+      await updatedPedido(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+      //Abortamos transacción para que no escriba en la base de datos
+  
+    });
+  });

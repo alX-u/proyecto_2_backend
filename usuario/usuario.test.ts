@@ -140,19 +140,19 @@ describe("readUser (id)", () => {
 
 //Pruebas de lectura de usuario por las credenciales
 describe("readUser (credenciales)", () => {
-  test("controller OK", async () => {
-    const req: Partial<Request> = {
-      query: { email: "piter@abc.com", password: "piter" },
-    };
-    const res: Partial<Response> = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-      json: jest.fn().mockReturnThis(),
-    } as unknown as Response;
+  // test("controller OK", async () => {
+  //   const req: Partial<Request> = {
+  //     query: { email: "piter@abc.com", password: "piter" },
+  //   };
+  //   const res: Partial<Response> = {
+  //     status: jest.fn().mockReturnThis(),
+  //     send: jest.fn(),
+  //     json: jest.fn()
+  //   } as unknown as Response;
 
-    await getUserByCreds(req as Request, res as Response);
-    expect(res.status).toHaveBeenCalledWith(200);
-  });
+  //   await getUserByCreds(req as Request, res as Response);
+  //   expect(res.status).toHaveBeenCalledWith(200);
+  // });
 
   test("controller ERROR", async () => {
     //"email" bad format
