@@ -67,4 +67,23 @@ describe('create product', () => {
         await createProduct(req as Request, res as Response);
         expect(res.status).toHaveBeenCalledWith(201);
     });
+
+    test("controller ERROR", async () => {
+        const req: Partial<Request> = {
+            body: {
+                name: 'Gaseosa',
+                description: 'Coke',
+                price: 2500,
+                user: 'asldalskmdaosk',
+                session
+            },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn(),
+        } as unknown as Response;
+        await createProduct(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
 });
