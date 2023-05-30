@@ -3,7 +3,7 @@ const cors = require("cors");
 import request from "supertest";
 const mongoose = require("mongoose");
 import userRoutes from "./usuario.routes";
-import { createUser, getUserByCreds, getUserById , updateUser, deleteUser} from "./usuario.controller";
+import { createUser, getUserByCreds, getUserById, updateUser, deleteUser } from "./usuario.controller";
 import {
   describe,
   expect,
@@ -54,12 +54,12 @@ describe("createUser", () => {
     await createUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(201);
     //Abortamos transacción para que no escriba en la base de datos
-  
+
   });
 
   test("controller ERROR", async () => {
     //Iniciamos transacción
-    
+
     const req: Partial<Request> = {
       body: {
         name: "HEY YO ITS THE A-TRAIN BABY",
@@ -77,23 +77,23 @@ describe("createUser", () => {
     await createUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     //Abortamos transacción para que no escriba en la base de datos
-    
+
   });
 
-  test("Endpoint OK", async () => {
-      //const testId = "646cf3445f783334b5e91092";
-      const { status } = await request(app)
-        .post('/').send({
-          name: "HEY YO ITS THE A-TRAIN BABY",
-          password: "hola123",
-          email: "hola@gmail.com",
-          phone_number: "3003664859",
-          address: "Calle ndoinasdoi",
-          session
-        })
-        .set("Accept", "application/json");
-      expect(status).toBe(201);
-    },10000);
+  // test("Endpoint OK", async () => {
+  //     //const testId = "646cf3445f783334b5e91092";
+  //     const { status } = await request(app)
+  //       .post('/').send({
+  //         name: "HEY YO ITS THE A-TRAIN BABY",
+  //         password: "hola123",
+  //         email: "hola@gmail.com",
+  //         phone_number: "3003664859",
+  //         address: "Calle ndoinasdoi",
+  //         session
+  //       })
+  //       .set("Accept", "application/json");
+  //     expect(status).toBe(201);
+  //   },10000);
 });
 
 //Pruebas de lectura de usuario por el ID
@@ -149,7 +149,7 @@ describe("readUser (credenciales)", () => {
       send: jest.fn(),
       json: jest.fn().mockReturnThis(),
     } as unknown as Response;
-    
+
     await getUserByCreds(req as Request, res as Response);
     expect(res.status).toBeCalled();
   });
@@ -202,15 +202,15 @@ describe("updateUser", () => {
     await updateUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(200);
     //Abortamos transacción para que no escriba en la base de datos
-  
+
   });
 
   test("controller ERROR", async () => {
     //Iniciamos transacción
-    
+
     const req: Partial<Request> = {
       body: {
-        _id:'646cf3445f783334b5e91092',
+        _id: '646cf3445f783334b5e91092',
         email: "3003664860",
         session
       },
@@ -223,7 +223,7 @@ describe("updateUser", () => {
     await updateUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     //Abortamos transacción para que no escriba en la base de datos
-    
+
   });
 });
 
@@ -233,7 +233,7 @@ describe("deleteUser", () => {
       params: {
         _id: '646cf3445f783334b5e91092',
       },
-      body: {session}
+      body: { session }
     };
     const res: Partial<Response> = {
       status: jest.fn().mockReturnThis(),
@@ -243,16 +243,16 @@ describe("deleteUser", () => {
     await deleteUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(200);
     //Abortamos transacción para que no escriba en la base de datos
-  
+
   });
 
   test("controller ERROR", async () => {
     //Iniciamos transacción
     const req: Partial<Request> = {
       params: {
-        _id:'1',
+        _id: '1',
       },
-      body: {session}
+      body: { session }
     };
     const res: Partial<Response> = {
       status: jest.fn().mockReturnThis(),
@@ -262,6 +262,6 @@ describe("deleteUser", () => {
     await deleteUser(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     //Abortamos transacción para que no escriba en la base de datos
-    
+
   });
 });

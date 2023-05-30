@@ -5,7 +5,7 @@ import { generateToken } from "../auth/auth_token";
 //Creación de productos
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { name, description, category, price, user } = req.body; // Obtén las propiedades del cuerpo de la solicitud
+    const { name, description, category, price, user, session } = req.body; // Obtén las propiedades del cuerpo de la solicitud
 
     // Crea un nuevo producto utilizando el modelo de Mongoose
     const product = new Product({
@@ -16,8 +16,12 @@ export const createProduct = async (req: Request, res: Response) => {
       user,
     });
 
-    // Guarda el usuario en la base de datos
-    await product.save();
+    // Guarda el producto en la base de datos
+    if (session && typeof session === 'object' && typeof session.startTransaction === 'function' && typeof session.commitTransaction === 'function' && typeof session.abortTransaction === 'function') {
+      await user.save({ session: session });
+    } else {
+      await user.save();
+    }
 
     res.status(201).json({ message: "Producto creado exitosamente", product });
   } catch (error) {
