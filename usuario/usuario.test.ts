@@ -151,7 +151,7 @@ describe("readUser (credenciales)", () => {
     } as unknown as Response;
 
     await getUserByCreds(req as Request, res as Response);
-    expect(res.status).toBeCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test("controller ERROR", async () => {
