@@ -193,8 +193,6 @@ describe("updateProduct", () => {
         } as unknown as Response;
         await updateProduct(req as Request, res as Response);
         expect(res.status).toHaveBeenCalledWith(200);
-        //Abortamos transacción para que no escriba en la base de datos
-
     });
 
     test("controller ERROR", async () => {
