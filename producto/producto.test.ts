@@ -129,8 +129,52 @@ describe('read product (user, search and/or category)', () => {
 
         await getProductsbyCategoryAndUser(req as Request, res as Response);
         expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    test("controller ERROR", async () => {
+        const req: Partial<Request> = {
+            query: { user: "asdasda" },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn().mockReturnThis(),
+        } as unknown as Response;
+
+        await getProductsbyCategoryAndUser(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
     })
 });
+
+describe('read product categories (by user)', () => {
+    test("controller OK", async () => {
+        const req: Partial<Request> = {
+            params: { user: "646cf3445f783334b5e91092" },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn().mockReturnThis(),
+        } as unknown as Response;
+
+        await getProductCategoriesByUser(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    test("controller ERROR", async () => {
+        const req: Partial<Request> = {
+            query: { user: "AOSINDOASND" },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn(),
+            json: jest.fn().mockReturnThis(),
+        } as unknown as Response;
+
+        await getProductCategoriesByUser(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
+})
 
 //Pruebas de actualizar producto
 describe("updateProduct", () => {

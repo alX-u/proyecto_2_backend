@@ -39,7 +39,6 @@ export async function getProductById(req: Request, res: Response) {
 
     res.status(200).json(producto);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Error al obtener el producto" });
   }
 }
@@ -64,7 +63,6 @@ export async function getProductsbyCategoryAndUser(
     const productos = await Product.find(filtro);
     res.status(200).json(productos);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Error al obtener los productos" });
   }
 }
@@ -90,7 +88,7 @@ export async function getProductCategoriesByUser(req: Request, res: Response) {
 export async function updateProduct(req: Request, res: Response) {
   //Aquí opto por usar tanto params como body
   const { _id } = req.params;
-  const {session, updates} = req.body;
+  const { session, updates } = req.body;
 
   try {
     const updatedProduct = await Product.findOneAndUpdate(
