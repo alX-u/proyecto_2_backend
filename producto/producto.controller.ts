@@ -90,7 +90,7 @@ export async function getProductCategoriesByUser(req: Request, res: Response) {
 export async function updateProduct(req: Request, res: Response) {
   //Aquí opto por usar tanto params como body
   const { _id } = req.params;
-  const updates = req.body;
+  const {session, updates} = req.body;
 
   try {
     const updatedProduct = await Product.findOneAndUpdate(
@@ -99,6 +99,7 @@ export async function updateProduct(req: Request, res: Response) {
       {
         new: true,
         runValidators: true,
+        session: session
       }
     );
     res.status(200).json(updatedProduct);
@@ -112,11 +113,13 @@ export async function updateProduct(req: Request, res: Response) {
 export async function deleteProduct(req: Request, res: Response) {
   //Aquí uso params
   const _id = req.params;
+  const { session } = req.body
   try {
     //El usuario se inhabilita, en vez de borrarse
     const deletedProduct = await Product.findOneAndUpdate(
       { _id: _id, active: true },
-      { active: false }
+      { active: false },
+      { session: session }
     );
     if (!deletedProduct)
       return res.status(404).json({ message: "Producto no encontrado" });
