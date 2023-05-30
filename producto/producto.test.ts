@@ -87,3 +87,30 @@ describe('create product', () => {
         expect(res.status).toHaveBeenCalledWith(500);
     });
 });
+
+//Pruebas de read product con id
+describe('read product (id)', () => {
+    test("controller OK", async () => {
+        const req: Partial<Request> = {
+            params: { _id: "64753d8481a4f535567542fb" },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+        } as unknown as Response;
+        await getProductById(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    test("controller ERROR", async () => {
+        const req: Partial<Request> = {
+            params: { _id: "1234564789798" },
+        };
+        const res: Partial<Response> = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+        } as unknown as Response;
+        await getProductById(req as Request, res as Response);
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
+});
