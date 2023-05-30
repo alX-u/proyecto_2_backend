@@ -113,6 +113,22 @@ describe('read product (id)', () => {
         await getProductById(req as Request, res as Response);
         expect(res.status).toHaveBeenCalledWith(500);
     });
+
+    test("Endpoint OK", async () => {
+        const testId = "64753d8481a4f535567542fb";
+        const { status } = await request(app)
+          .get(`/ById/${testId}`)
+          .set("Accept", "application/json");
+        expect(status).toBe(200);
+      });
+    
+    test("Endpoint Error", async () => {
+        const testId = "1234564789798";
+        const { status } = await request(app)
+          .get(`/ById/${testId}`)
+          .set("Accept", "application/json");
+        expect(status).toBe(500);
+      });
 });
 
 //Pruebas de obtener producto por usuario, texto de búsqueda y/o por categoría
@@ -144,6 +160,22 @@ describe('read product (user, search and/or category)', () => {
         await getProductsbyCategoryAndUser(req as Request, res as Response);
         expect(res.status).toHaveBeenCalledWith(500);
     })
+
+	test("Endpoint OK", async () => {
+		const query = {user: "646cf3445f783334b5e91092"};
+        const { status } = await request(app)
+          .get(`/ByCategoryAndUser/`)
+          .set("Accept", "application/json");
+        expect(status).toBe(200);
+      });
+    
+    test("Endpoint Error", async () => {
+		const query = {user: "asdasda" };
+        const { status } = await request(app)
+          .get(`/ByCategoryAndUser`).query(query)
+          .set("Accept", "application/json");
+        expect(status).toBe(500);
+      });
 });
 
 describe('read product categories (by user)', () => {
@@ -174,6 +206,22 @@ describe('read product categories (by user)', () => {
         await getProductCategoriesByUser(req as Request, res as Response);
         expect(res.status).toHaveBeenCalledWith(500);
     });
+
+	test("Endpoint OK", async () => {
+		const testId = "646cf3445f783334b5e91092";
+        const { status } = await request(app)
+          .get(`/CategoriesByUser/${testId}`)
+          .set("Accept", "application/json");
+        expect(status).toBe(200);
+      });
+    
+    test("Endpoint Error", async () => {
+		const testId = "1234564789798";
+        const { status } = await request(app)
+          .get(`/CategoriesByUser/${testId}`)
+          .set("Accept", "application/json");
+        expect(status).toBe(500);
+      });
 })
 
 //Pruebas de actualizar producto

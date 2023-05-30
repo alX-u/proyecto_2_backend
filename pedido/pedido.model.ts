@@ -10,7 +10,7 @@ export interface IPedido {
   active: boolean;
 }
 
-const productSchema = new Schema<IPedido>(
+const pedidoSchema = new Schema<IPedido>(
   {
     client: {
       type: Schema.Types.ObjectId,
@@ -75,4 +75,4 @@ const productSchema = new Schema<IPedido>(
   { timestamps: true, collection: "pedidos" }
 );
 
-export default model<IPedido>("pedido", productSchema);
+export default model<IPedido>("pedido", pedidoSchema);
