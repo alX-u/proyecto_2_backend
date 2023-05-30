@@ -4,20 +4,26 @@ import Pedido from "./pedido.model"; // Importa el modelo de usuario definido en
 
 export const createPedido = async (req: Request, res: Response) => {
   try {
-    const { client, products, totalPrice, } = req.body; // Obtén las propiedades del cuerpo de la solicitud
+    const { client, seller,products, totalPrice, session} = req.body; // Obtén las propiedades del cuerpo de la solicitud
 
     // Crea un nuevo pedido utilizando el modelo de Mongoose
     const pedido = new Pedido({
       client,
+      seller,
       products,
       totalPrice,
     });
 
     // Guarda el usuario en la base de datos
-    await pedido.save();
+    if (session && typeof session === 'object' && typeof session.startTransaction === 'function' && typeof session.commitTransaction === 'function' && typeof session.abortTransaction === 'function') {
+      await pedido.save({ session: session });
+    } else {
+      await pedido.save();
+    }
 
     res.status(201).json({ message: "Pedido creado exitosamente", pedido });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Error al crear el pedido", error });
   }
 };

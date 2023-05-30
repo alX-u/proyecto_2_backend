@@ -3,8 +3,8 @@ import { Schema, model } from "mongoose";
 export interface IPedido {
   client: Schema.Types.ObjectId;
   seller: Schema.Types.ObjectId;
-  products: [{ id: Schema.Types.ObjectId, quantity: number }];
-  totalPrice: number;
+  products: [{ producto: Schema.Types.ObjectId, quantity: Number }];
+  totalPrice: Number;
   comments: String;
   score: Number;
   active: boolean;
@@ -50,13 +50,13 @@ const productSchema = new Schema<IPedido>(
             const producto = await model("product").findOne({
               _id: value
             });
-            if (producto == null || producto.active == true) {
+            if (producto == null || producto.active != true) {
               throw new Error('No se encontro el producto');
             }
           }
         }
       },
-      cantidad: { type: Number, required: true }
+      quantity: { type: Number, required: true }
     }
     ],
     totalPrice: {
