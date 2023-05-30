@@ -27,7 +27,6 @@ export const createUser = async (req: Request, res: Response) => {
 
     res.status(201).json({ message: "Usuario creado exitosamente", user });
   } catch (error) {
-    console.log(error)
     res.status(500).json({ message: "Error al crear el usuario", error });
   }
 };
@@ -83,7 +82,7 @@ export async function getUserByCreds(req: Request, res: Response) {
 export async function updateUser(req: Request, res: Response) {
   //Aquí opto por usar tanto params como body
   const { _id, session, ...updates } = req.body;
-  
+
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: _id, active: true },
@@ -91,7 +90,7 @@ export async function updateUser(req: Request, res: Response) {
       {
         new: true,
         runValidators: true,
-        session:session
+        session: session
       },
     );
 
@@ -106,7 +105,7 @@ export async function updateUser(req: Request, res: Response) {
 export async function deleteUser(req: Request, res: Response) {
   //Aquí uso params
   const _id = req.params;
-  const {session} = req.body
+  const { session } = req.body
   try {
     //El usuario se inhabilita, en vez de borrarse  `
     const deletedUser = await User.findOneAndUpdate(

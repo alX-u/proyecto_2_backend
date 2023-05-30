@@ -20,6 +20,7 @@ import {
     jest,
 } from "@jest/globals";
 import request from "supertest";
+import User from '../usuario/usuario.model';
 
 //Vars
 const app = express();
@@ -27,6 +28,7 @@ let session: any = {};
 
 /* Opening database connection before all tests. */
 beforeAll(async () => {
+    mongoose.model('user', User.schema);
     app.use(cors());
     app.use(express.json());
     app.use("/", productRoutes);
@@ -63,6 +65,6 @@ describe('create product', () => {
             json: jest.fn(),
         } as unknown as Response;
         await createProduct(req as Request, res as Response);
-        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledWith(201);
     });
 });

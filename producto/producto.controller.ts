@@ -18,13 +18,14 @@ export const createProduct = async (req: Request, res: Response) => {
 
     // Guarda el producto en la base de datos
     if (session && typeof session === 'object' && typeof session.startTransaction === 'function' && typeof session.commitTransaction === 'function' && typeof session.abortTransaction === 'function') {
-      await user.save({ session: session });
+      await product.save({ session: session });
     } else {
-      await user.save();
+      await product.save();
     }
 
     res.status(201).json({ message: "Producto creado exitosamente", product });
   } catch (error) {
+    console.log('Error de producto', error)
     res.status(500).json({ message: "Error al crear el producto", error });
   }
 };
